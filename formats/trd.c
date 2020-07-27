@@ -1,3 +1,9 @@
+#include <stdlib.h>
+#include <string.h>
+
+#include "../printer.c"
+#include "../trdos.h"
+
 void trd_unpack_disk_info(unsigned char *buffer, disk_info *info) {
     info->format = buffer[OFFSET_DISK_FORMAT];
     info->num_total_files = buffer[OFFSET_TOTAL_FILES];

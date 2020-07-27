@@ -1,3 +1,10 @@
+#ifndef _PRINTER_C
+#define _PRINTER_C 1
+
+#include <stdio.h>
+
+#include "trdos.h"
+
 void print_padding(int number) {
     if (number < 100) {
         printf(" ");
@@ -45,3 +52,4 @@ void print_file_info(file_info *info) {
     printf("%.8s<%c>%3d  %05d %05d\n", info->filename, info->extension,
            info->length_sectors, info->start_address, info->length_bytes);
 }
+#endif

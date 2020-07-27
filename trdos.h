@@ -1,3 +1,6 @@
+#ifndef _TRDOS_H
+#define _TRDOS_H 1
+
 #include <stdint.h>
 
 #define SECTOR_SIZE 256
@@ -32,3 +35,4 @@ typedef struct {
     uint16_t length_bytes;
     uint8_t length_sectors;
 } file_info;
+#endif
