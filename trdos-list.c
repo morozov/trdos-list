@@ -27,7 +27,7 @@ int list(char *filename) {
         fprintf(stderr, "Unable to open \"%s\": %s\n", filename,
                 strerror(errno));
 
-        return 1;
+        return EXIT_FAILURE;
     }
 
     result = trd_list(fp);
@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
     if (argc < 2) {
         usage(argv[0]);
 
-        return 1;
+        return EXIT_FAILURE;
     }
 
     return list(argv[1]);

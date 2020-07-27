@@ -24,27 +24,27 @@ int trd_read_disk_info(FILE *fp, disk_info *info) {
     if (buffer == NULL) {
         fprintf(stderr, "Unable to allocate buffer\n");
 
-        return 1;
+        return EXIT_FAILURE;
     }
 
     if (fread(buffer, 1, SECTOR_SIZE, fp) != SECTOR_SIZE) {
         fprintf(stderr, "Unexpected end of file\n");
         free(buffer);
 
-        return 1;
+        return EXIT_FAILURE;
     }
 
     if (buffer[OFFSET_TRDOS_IDENTIFIER] != TRDOS_IDENTIFIER) {
         fprintf(stderr, "Not a TR-DOS image\n");
         free(buffer);
 
-        return 1;
+        return EXIT_FAILURE;
     }
 
     trd_unpack_disk_info(buffer, info);
     free(buffer);
 
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 int trd_read_file_info(FILE *fp, file_info *info) {
@@ -54,20 +54,20 @@ int trd_read_file_info(FILE *fp, file_info *info) {
     if (buffer == NULL) {
         fprintf(stderr, "Unable to allocate buffer\n");
 
-        return 1;
+        return EXIT_FAILURE;
     }
 
     if (fread(buffer, 1, 16, fp) != 16) {
         fprintf(stderr, "Unexpected end of file\n");
         free(buffer);
 
-        return 1;
+        return EXIT_FAILURE;
     }
 
     trd_unpack_file_info(buffer, info);
     free(buffer);
 
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 int trd_list(FILE *fp) {
@@ -78,7 +78,7 @@ int trd_list(FILE *fp) {
     fseek(fp, INFO_SECTOR * SECTOR_SIZE, SEEK_SET);
 
     result = trd_read_disk_info(fp, &disk_info);
-    if (result != 0) {
+    if (result != EXIT_SUCCESS) {
         return result;
     }
 
@@ -88,12 +88,12 @@ int trd_list(FILE *fp) {
 
     for (unsigned char i = 0; i < disk_info.num_total_files; i++) {
         result = trd_read_file_info(fp, &file_info);
-        if (result != 0) {
+        if (result != EXIT_SUCCESS) {
             return result;
         }
 
         print_file_info(&file_info);
     }
 
-    return 0;
+    return EXIT_SUCCESS;
 }
