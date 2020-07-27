@@ -1,2 +1,2 @@
 trdos-list: formats/trd.c printer.c trdos-list.c trdos.h
-	gcc trdos-list.c -o trdos-list
+	gcc -Os -s trdos-list.c -o trdos-list
