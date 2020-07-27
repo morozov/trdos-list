@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "formats/scl.c"
 #include "formats/trd.c"
 #include "printer.c"
 #include "trdos.h"
@@ -11,14 +12,36 @@ void usage(char *program) {
         "TR-DOS List is an utility to display the TR-DOS image file "
         "listing.\n\n");
     printf("Usage:\n");
-    printf("  %s <file>\n", program);
+    printf("  %s <file.trd>\n", program);
+    printf("  %s <file.scl>\n", program);
 }
 
 extern int errno;
 
+int has_ext(char *filename, const char *ext) {
+    const char *pos = strrchr(filename, '.');
+
+    if (pos == NULL) {
+        return 1;
+    }
+
+    return strncasecmp(pos + 1, ext, strlen(ext));
+}
+
 int list(char *filename) {
     FILE *fp;
     int result;
+    int (*fun)(FILE *);
+
+    if (has_ext(filename, "trd") == 0) {
+        fun = &trd_list;
+    } else if (has_ext(filename, "scl") == 0) {
+        fun = &scl_list;
+    } else {
+        printf("Unsupported file type\n");
+
+        return EXIT_FAILURE;
+    }
 
     fp = fopen(filename, "r");
 
@@ -29,7 +52,7 @@ int list(char *filename) {
         return EXIT_FAILURE;
     }
 
-    result = trd_list(fp);
+    result = fun(fp);
 
     fclose(fp);
 
