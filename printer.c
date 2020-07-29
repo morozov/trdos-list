@@ -49,6 +49,12 @@ void print_disk_info(disk_info *info) {
 }
 
 void print_file_info(file_info *info) {
+    switch (info->filename[0]) {
+        case 0x00:
+        case 0x01:
+            return;
+    }
+
     printf("%.8s<%c>%3d  %05d %05d\n", info->filename, info->extension,
            info->length_sectors, info->start_address, info->length_bytes);
 }
