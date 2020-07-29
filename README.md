@@ -4,7 +4,8 @@ TR-DOS List is a utility to display the TR-DOS image listing in the format simil
 
 The following image formats are supported:
 
-1. TRD:
+1. [TRD](https://faqwiki.zxnet.co.uk/wiki/TR-DOS_filesystem):
+
    ```txt
    $ trdos-list ZX-REVU1.TRD
    Title:  AMD4ever Disk Drive: A
@@ -20,7 +21,7 @@ The following image formats are supported:
    REVIEW  <5>255  49152 02048
    REVIEW  <6> 14  49152 03181
    ```
-2. SCL:
+2. [SCL](https://faqwiki.zxnet.co.uk/wiki/SCL_format):
    ```
    $ trdos-list Dizzy\ 4r.scl
    Title:           Disk Drive: A
