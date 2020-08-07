@@ -2,8 +2,10 @@
 #define _PRINTER_C 1
 
 #include <stdio.h>
+#include <string.h>
 
 #include "trdos.h"
+#include "trdos.c"
 
 void print_padding(int number) {
     if (number < 100) {
@@ -48,14 +50,65 @@ void print_disk_info(disk_info *info) {
     printf("  File Name    Start Length Line\n");
 }
 
-void print_file_info(file_info *info) {
+/**
+ * Reads the autostart line of a BASIC file from the file pointer
+ * into the file info struct
+ *
+ * @param fp     The image file pointer
+ * @param info   The target file info struct
+ * @param offset The offset to subtract from the file end position
+ *
+ * @return EXIT_SUCCESS on success or EXIT_FAILURE on failure
+ */
+int print_read_autostart(FILE *fp, file_info *info, int offset) {
+    const char *marker = "\x80\xAA";
+    unsigned char buffer[4];
+
+    fseek(fp, trdos_file_end_offset(info) - offset, SEEK_SET);
+
+    if (fread(buffer, 1, 4, fp) != 4) {
+        fprintf(stderr, "Unexpected end of file\n");
+
+        return EXIT_FAILURE;
+    }
+
+    if (strncmp(buffer, marker, 2) == 0) {
+        info->autostart_line = buffer[2] | (buffer[3] << 8);
+    }
+
+    return EXIT_SUCCESS;
+}
+
+int print_file_info(file_info *info, FILE *fp, int offset) {
+    int pos;
+    int result;
+
     switch (info->filename[0]) {
         case 0x00:
         case 0x01:
-            return;
+            return EXIT_SUCCESS;
     }
 
-    printf("%.8s<%c>%3d  %05d %05d\n", info->filename, info->extension,
+    if (info->extension == 'B') {
+        pos = ftell(fp);
+
+        result = print_read_autostart(fp, info, offset);
+        fseek(fp, pos, SEEK_SET);
+
+        if (result != EXIT_SUCCESS) {
+            return result;
+        }
+    }
+
+    printf("%.8s<%c>%3d  %05d %05d", info->filename, info->extension,
            info->length_sectors, info->start_address, info->length_bytes);
+
+    if (info->autostart_line > 0) {
+        printf(" %d", info->autostart_line);
+    }
+
+    printf("\n");
+
+    return EXIT_SUCCESS;
 }
 #endif

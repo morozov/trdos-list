@@ -21,19 +21,21 @@ void trd_unpack_file_info(unsigned char *buffer, file_info *info) {
     info->start_address = buffer[9] | (buffer[10] << 8);
     info->length_bytes = buffer[11] | (buffer[12] << 8);
     info->length_sectors = buffer[13];
+    info->start_sector = buffer[14];
+    info->start_track = buffer[15];
 }
 
 int trd_read_disk_info(FILE *fp, disk_info *info) {
     unsigned char *buffer;
 
-    buffer = (unsigned char *)malloc(SECTOR_SIZE);
+    buffer = (unsigned char *)malloc(SIZE_SECTOR_BYTES);
     if (buffer == NULL) {
         fprintf(stderr, "Unable to allocate buffer\n");
 
         return EXIT_FAILURE;
     }
 
-    if (fread(buffer, 1, SECTOR_SIZE, fp) != SECTOR_SIZE) {
+    if (fread(buffer, 1, SIZE_SECTOR_BYTES, fp) != SIZE_SECTOR_BYTES) {
         fprintf(stderr, "Unexpected end of file\n");
         free(buffer);
 
@@ -81,7 +83,7 @@ int trd_list(FILE *fp) {
     disk_info disk_info;
     file_info file_info;
 
-    fseek(fp, INFO_SECTOR * SECTOR_SIZE, SEEK_SET);
+    fseek(fp, INFO_SECTOR * SIZE_SECTOR_BYTES, SEEK_SET);
 
     result = trd_read_disk_info(fp, &disk_info);
     if (result != EXIT_SUCCESS) {
@@ -93,12 +95,16 @@ int trd_list(FILE *fp) {
     fseek(fp, 0, SEEK_SET);
 
     for (unsigned char i = 0; i < disk_info.num_total_files; i++) {
+        memset(&file_info, 0, sizeof(file_info));
         result = trd_read_file_info(fp, &file_info);
         if (result != EXIT_SUCCESS) {
             return result;
         }
 
-        print_file_info(&file_info);
+        result = print_file_info(&file_info, fp, 0);
+        if (result != EXIT_SUCCESS) {
+            return result;
+        }
     }
 
     return EXIT_SUCCESS;

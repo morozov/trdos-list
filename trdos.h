@@ -3,7 +3,8 @@
 
 #include <stdint.h>
 
-#define SECTOR_SIZE 256
+#define SIZE_SECTOR_BYTES 256
+#define SIZE_TRACK_SECTORS 16
 #define INFO_SECTOR 8
 
 #define OFFSET_DISK_FORMAT 227
@@ -34,6 +35,9 @@ typedef struct {
     uint16_t start_address;
     uint16_t length_bytes;
     uint8_t length_sectors;
+    uint8_t start_sector;
+    uint8_t start_track;
+    uint16_t autostart_line;
 } file_info;
 
 /**

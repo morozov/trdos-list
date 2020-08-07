@@ -77,6 +77,8 @@ int scl_read_file_info(FILE *fp, file_info *info) {
 
 int scl_list(FILE *fp) {
     int result;
+    int header_size;
+    int curr_sector = SIZE_TRACK_SECTORS;
     disk_info disk_info;
 
     result = scl_read_disk_info(fp, &disk_info);
@@ -95,13 +97,28 @@ int scl_list(FILE *fp) {
             return result;
         }
 
+        file_infos[i].start_track = curr_sector / SIZE_TRACK_SECTORS;
+        file_infos[i].start_sector = curr_sector % SIZE_TRACK_SECTORS;
+        curr_sector += file_infos[i].length_sectors;
+
         disk_info.num_free_sectors -= file_infos[i].length_sectors;
     }
+
+    // this is where the SCL header ends
+    header_size = ftell(fp);
 
     print_disk_info(&disk_info);
 
     for (unsigned char i = 0; i < disk_info.num_total_files; i++) {
-        print_file_info(&file_infos[i]);
+        result = print_file_info(
+            &file_infos[i], fp,
+            SIZE_TRACK_SECTORS * SIZE_SECTOR_BYTES - header_size);
+
+        if (result != EXIT_SUCCESS) {
+            free(file_infos);
+
+            return result;
+        }
     }
 
     free(file_infos);
