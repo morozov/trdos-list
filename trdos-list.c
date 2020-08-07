@@ -31,12 +31,12 @@ int has_ext(char *filename, const char *ext) {
 int list(char *filename) {
     FILE *fp;
     int result;
-    int (*fun)(FILE *);
+    img_list img_list;
 
     if (has_ext(filename, "trd") == 0) {
-        fun = &trd_list;
+        img_list = &trd_list;
     } else if (has_ext(filename, "scl") == 0) {
-        fun = &scl_list;
+        img_list = &scl_list;
     } else {
         printf("Unsupported file type\n");
 
@@ -52,7 +52,7 @@ int list(char *filename) {
         return EXIT_FAILURE;
     }
 
-    result = fun(fp);
+    result = img_list(fp);
 
     fclose(fp);
 

@@ -35,4 +35,9 @@ typedef struct {
     uint16_t length_bytes;
     uint8_t length_sectors;
 } file_info;
+
+/**
+ * Prints the listing of the disk image that the pointer points to
+ */
+typedef int (*img_list)(FILE *);
 #endif
