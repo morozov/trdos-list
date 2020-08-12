@@ -55,7 +55,11 @@ int list(char *filename) {
 
     fclose(fp);
 
-    return result;
+    if (!result) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
 }
 
 int main(int argc, char *argv[]) {

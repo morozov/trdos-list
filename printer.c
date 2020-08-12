@@ -57,8 +57,6 @@ void print_disk_info(disk_info *info) {
  * @param fp     The image file pointer
  * @param info   The target file info struct
  * @param offset The offset to subtract from the file end position
- *
- * @return EXIT_SUCCESS on success or EXIT_FAILURE on failure
  */
 int print_read_autostart(FILE *fp, file_info *info, int offset) {
     const char *marker = "\x80\xAA";
@@ -69,14 +67,14 @@ int print_read_autostart(FILE *fp, file_info *info, int offset) {
     if (fread(buffer, 1, 4, fp) != 4) {
         perror("Unable to read autostart data");
 
-        return EXIT_FAILURE;
+        return 0;
     }
 
     if (strncmp(buffer, marker, 2) == 0) {
         info->autostart_line = buffer[2] | (buffer[3] << 8);
     }
 
-    return EXIT_SUCCESS;
+    return 1;
 }
 
 int print_file_info(file_info *info, FILE *fp, int offset) {
@@ -86,7 +84,7 @@ int print_file_info(file_info *info, FILE *fp, int offset) {
     switch (info->filename[0]) {
         case 0x00:
         case 0x01:
-            return EXIT_SUCCESS;
+            return 0;
     }
 
     if (info->extension == 'B') {
@@ -95,7 +93,7 @@ int print_file_info(file_info *info, FILE *fp, int offset) {
         result = print_read_autostart(fp, info, offset);
         fseek(fp, pos, SEEK_SET);
 
-        if (result != EXIT_SUCCESS) {
+        if (!result) {
             return result;
         }
     }
@@ -109,6 +107,6 @@ int print_file_info(file_info *info, FILE *fp, int offset) {
 
     printf("\n");
 
-    return EXIT_SUCCESS;
+    return 1;
 }
 #endif

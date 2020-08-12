@@ -114,7 +114,7 @@ int scl_list(FILE *fp) {
             &file_infos[i], fp,
             SIZE_TRACK_SECTORS * SIZE_SECTOR_BYTES - header_size);
 
-        if (result != EXIT_SUCCESS) {
+        if (!result) {
             free(file_infos);
 
             return result;
@@ -123,5 +123,5 @@ int scl_list(FILE *fp) {
 
     free(file_infos);
 
-    return 0;
+    return 1;
 }

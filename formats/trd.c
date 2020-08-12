@@ -32,27 +32,27 @@ int trd_read_disk_info(FILE *fp, disk_info *info) {
     if (buffer == NULL) {
         perror("Unable to read disk info");
 
-        return EXIT_FAILURE;
+        return 0;
     }
 
     if (fread(buffer, 1, SIZE_SECTOR_BYTES, fp) != SIZE_SECTOR_BYTES) {
         perror("Unable to read disk info");
         free(buffer);
 
-        return EXIT_FAILURE;
+        return 0;
     }
 
     if (buffer[OFFSET_TRDOS_IDENTIFIER] != TRDOS_IDENTIFIER) {
         fprintf(stderr, "Not a TR-DOS image\n");
         free(buffer);
 
-        return EXIT_FAILURE;
+        return 0;
     }
 
     trd_unpack_disk_info(buffer, info);
     free(buffer);
 
-    return EXIT_SUCCESS;
+    return 1;
 }
 
 int trd_read_file_info(FILE *fp, file_info *info) {
@@ -62,20 +62,20 @@ int trd_read_file_info(FILE *fp, file_info *info) {
     if (buffer == NULL) {
         perror("Unable to read file info");
 
-        return EXIT_FAILURE;
+        return 0;
     }
 
     if (fread(buffer, 1, 16, fp) != 16) {
         perror("Unable to read file info");
         free(buffer);
 
-        return EXIT_FAILURE;
+        return 0;
     }
 
     trd_unpack_file_info(buffer, info);
     free(buffer);
 
-    return EXIT_SUCCESS;
+    return 1;
 }
 
 int trd_list(FILE *fp) {
@@ -86,7 +86,7 @@ int trd_list(FILE *fp) {
     fseek(fp, INFO_SECTOR * SIZE_SECTOR_BYTES, SEEK_SET);
 
     result = trd_read_disk_info(fp, &disk_info);
-    if (result != EXIT_SUCCESS) {
+    if (!result) {
         return result;
     }
 
@@ -97,15 +97,15 @@ int trd_list(FILE *fp) {
     for (unsigned char i = 0; i < disk_info.num_total_files; i++) {
         memset(&file_info, 0, sizeof(file_info));
         result = trd_read_file_info(fp, &file_info);
-        if (result != EXIT_SUCCESS) {
+        if (!result) {
             return result;
         }
 
         result = print_file_info(&file_info, fp, 0);
-        if (result != EXIT_SUCCESS) {
+        if (!result) {
             return result;
         }
     }
 
-    return EXIT_SUCCESS;
+    return 1;
 }
