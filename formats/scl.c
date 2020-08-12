@@ -22,13 +22,13 @@ int scl_read_disk_info(FILE *fp, disk_info *info) {
     buffer = (unsigned char *)malloc(9);
 
     if (buffer == NULL) {
-        fprintf(stderr, "Unable to allocate buffer\n");
+        perror("Unable to read disk info");
 
         return 1;
     }
 
     if (fread(buffer, 1, 9, fp) != 9) {
-        fprintf(stderr, "Read error\n");
+        perror("Unable to read header");
 
         return 1;
     }
@@ -57,13 +57,13 @@ int scl_read_file_info(FILE *fp, file_info *info) {
 
     buffer = (unsigned char *)malloc(14);
     if (buffer == NULL) {
-        fprintf(stderr, "Unable to allocate buffer\n");
+        perror("Unable to read file info");
 
         return 1;
     }
 
     if (fread(buffer, 1, 14, fp) != 14) {
-        fprintf(stderr, "Unexpected end of file\n");
+        perror("Unable to read file info");
         free(buffer);
 
         return 1;

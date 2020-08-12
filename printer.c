@@ -67,7 +67,7 @@ int print_read_autostart(FILE *fp, file_info *info, int offset) {
     fseek(fp, trdos_file_end_offset(info) - offset, SEEK_SET);
 
     if (fread(buffer, 1, 4, fp) != 4) {
-        fprintf(stderr, "Unexpected end of file\n");
+        perror("Unable to read autostart data");
 
         return EXIT_FAILURE;
     }

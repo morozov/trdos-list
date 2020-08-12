@@ -46,8 +46,7 @@ int list(char *filename) {
     fp = fopen(filename, "r");
 
     if (fp == NULL) {
-        fprintf(stderr, "Unable to open \"%s\": %s\n", filename,
-                strerror(errno));
+        perror("Unable to open file");
 
         return EXIT_FAILURE;
     }

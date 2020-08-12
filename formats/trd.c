@@ -30,13 +30,13 @@ int trd_read_disk_info(FILE *fp, disk_info *info) {
 
     buffer = (unsigned char *)malloc(SIZE_SECTOR_BYTES);
     if (buffer == NULL) {
-        fprintf(stderr, "Unable to allocate buffer\n");
+        perror("Unable to read disk info");
 
         return EXIT_FAILURE;
     }
 
     if (fread(buffer, 1, SIZE_SECTOR_BYTES, fp) != SIZE_SECTOR_BYTES) {
-        fprintf(stderr, "Unexpected end of file\n");
+        perror("Unable to read disk info");
         free(buffer);
 
         return EXIT_FAILURE;
@@ -60,13 +60,13 @@ int trd_read_file_info(FILE *fp, file_info *info) {
 
     buffer = (unsigned char *)malloc(16);
     if (buffer == NULL) {
-        fprintf(stderr, "Unable to allocate buffer\n");
+        perror("Unable to read file info");
 
         return EXIT_FAILURE;
     }
 
     if (fread(buffer, 1, 16, fp) != 16) {
-        fprintf(stderr, "Unexpected end of file\n");
+        perror("Unable to read file info");
         free(buffer);
 
         return EXIT_FAILURE;
